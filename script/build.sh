@@ -10,6 +10,18 @@ elif [ -z "$PREFIX" ]; then
     exit 1
 fi
 
+THIS_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
+source ${THIS_DIR}/env.sh
+
+BUILD_DIR=${REPO_ROOT}/build/${TARGET}
+mkdir -p ${BUILD_DIR}
+
+getRelative()
+{
+    base=$1; stem=$2;
+    echo $(realpath --relative-to="$base" "$stem");
+}
+
 makePretty()
 {
     dir=$1;
@@ -24,43 +36,27 @@ touchAndMakePretty()
     echo $dir;
 }
 
-THIS_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
-source ${THIS_DIR}/env.sh
-REPO_PARENT=$(makePretty "$REPO_ROOT/../")
-BUILD_DIR=$(touchAndMakePretty "$REPO_PARENT/anos-build/$TARGET")
-echo "REPO_PARENT=$REPO_PARENT"
-echo "BUILD_DIR=$BUILD_DIR"
+# REPO_PARENT=$(makePretty "$REPO_ROOT/../")
+# BUILD_DIR=$(touchAndMakePretty "$REPO_PARENT/anos-build/$TARGET")
+# mkdir -p "$BUILD_DIR"
 
-while [[ "$1" != "" ]]; do
-    case "$1" in
-        --clean )
-            rm -rf $BUILD_DIR/*
-            $SCRIPT_DIR/dist_fetch.sh --clean
-            shift
-            ;;
-        * )
-            echo "Error: Invalid argument $1"
-            exit 1
-            ;;
-    esac
-done
-
-mkdir -p "$BUILD_DIR"
-echo "-----------------------------"
-echo "| TARGET  $TARGET"
-echo "| BUILD   $BUILD_DIR"
-echo "| PREFIX  $PREFIX"
-echo "-----------------------------"
-
-getRelative()
-{
-    base=$1; stem=$2;
-    echo $(realpath --relative-to="$base" "$stem");
-}
+# while [[ "$1" != "" ]]; do
+#     case "$1" in
+#         --clean )
+#             rm -rf $BUILD_DIR/*
+#             $SCRIPT_DIR/dist_fetch.sh --clean
+#             shift
+#             ;;
+#         * )
+#             echo "Error: Invalid argument $1"
+#             exit 1
+#             ;;
+#     esac
+# done
 
 getBuildDest()
 {
-    dir=$(getRelative "$REPO_PARENT" "$1")
+    dir=$(getRelative "$REPO_ROOT" "$1")
     echo $(touchAndMakePretty "$BUILD_DIR/$dir")
 }
 
@@ -68,11 +64,10 @@ mkdist()
 {
     name=$1; shift;
 
-    source=$DIST_DIR/$name; cd $(getBuildDest "$source")
+    source=$DIST_DIR/$name; cd $(getBuildDest "$source");
     $source/configure --prefix="$PREFIX" $@
 
-    make -j$(nproc)
-    make -j$(nproc) install
+    make -j$(nproc);  make install;
 }
 
 mksubmod()
@@ -82,67 +77,61 @@ mksubmod()
     source=$SUBMOD_DIR/$name; cd $(getBuildDest "$source");
     $source/configure --prefix="$PREFIX" $@
 
-    echo "source=$source"
-    echo "dest=$dest"
-    exit 0
-
-    make -j$(nproc)
-    make install
+    make -j$(nproc);
+    make install;
 }
 
-build_binutils_gcc()
+
+mksubmod_gcc()
 {
     mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
 
     source=$SUBMOD_DIR/gcc; cd $(getBuildDest "$source");
     $source/configure \
-        --prefix="$PREFIX" \
-        --target=$TARGET \
-        --disable-nls \
-        --enable-languages=c,c++ \
-        --without-headers \
-        --disable-hosted-libstdcxx \
-        --with-gmp="$PREFIX" \
-        --with-mpc="$PREFIX" \
-        --with-mpfr="$PREFIX"
+        --prefix="$PREFIX" --target=$TARGET \
+        --disable-nls --enable-languages=c,c++ \
+        --without-headers --disable-hosted-libstdcxx \
+        --with-gmp="$PREFIX" --with-mpc="$PREFIX" --with-mpfr="$PREFIX"
 
-    make -j$(nproc) all-gcc all-target-libgcc all-target-libstdc++-v3 
-    make -j$(nproc) install-gcc install-target-libgcc install-target-libstdc++-v3
+    make -j$(nproc) all-gcc all-target-libgcc all-target-libstdc++-v3;
+    make $itargets install-gcc install-target-libgcc install-target-libstdc++-v3;
 }
 
 
-build_limine()
-{
-    cd $SUBMOD_DIR/limine
+# mksubmod_limine()
+# {
+#     cd $SUBMOD_DIR/limine
 
-    if [[ ! -f "configure" ]]; then
-        ./bootstrap
-    fi
+#     if [[ ! -f "configure" ]]; then
+#         ./bootstrap
+#     fi
 
-    ./configure \
-        TOOLCHAIN_FOR_TARGET=x86_64-anos- \
-        --prefix=$HOME/devel/anos_opt/x86_64-elf \
-        --enable-bios-cd=yes --enable-bios-pxe=yes --enable-bios=yes \
-        --enable-uefi-x86-64=yes --enable-uefi-cd
+#     ./configure \
+#         TOOLCHAIN_FOR_TARGET=x86_64-anos- \
+#         --prefix=$HOME/devel/anos_opt/x86_64-elf \
+#         --enable-bios-cd=yes --enable-bios-pxe=yes --enable-bios=yes \
+#         --enable-uefi-x86-64=yes --enable-uefi-cd
 
-    make -j$(nproc)
-    make install
+#     make -j$(nproc)
+#     make install
 
-    # mkdir -p $AUX_BUILD/include/limine
-    # cp ./limine-protocol/{include/*,LICENSE,*.md} $AUX_BUILD/include/limine/
-}
+#     # mkdir -p $AUX_BUILD/include/limine
+#     # cp ./limine-protocol/{include/*,LICENSE,*.md} $AUX_BUILD/include/limine/
+# }
 
 
 
-# mkdist autoconf --target=$TARGET
-# mkdist automake --target=$TARGET
+mkdist autoconf --target=$TARGET
+mkdist automake --target=$TARGET
 
 if [[ "$TARGET" == "x86_64-anos" ]]; then
+
+    mksubmod_gcc
 
     # mkdist gmp
     # mkdist mpc --target=$TARGET
     # mkdist mpfr --target=$TARGET
-    build_binutils_gcc
+    # mksubmod_gcc
     # build_limine
 
     # mksubmod limine TOOLCHAIN_FOR_TARGET=$TARGET- \
