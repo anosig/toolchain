@@ -88,7 +88,8 @@ mksubmod_gcc()
     $source/configure \
         --prefix="$PREFIX" --target=$TARGET \
         --disable-nls --enable-languages=c,c++ \
-        --without-headers --disable-hosted-libstdcxx 
+        --without-headers --disable-hosted-libstdcxx  \
+        --disable-multilib
 
     make -j$(nproc) all-gcc                 && make install-gcc;
     make -j$(nproc) all-target-libgcc       && make install-target-libgcc;
@@ -122,18 +123,15 @@ mksubmod_gcc()
 mkdist autoconf --target=$TARGET
 mkdist automake --target=$TARGET
 
-if [[ "$TARGET" != "x86_64-elf-anos" ]]; then
-    exit 0
-fi
-
-mkdist mpc --target=$TARGET
-mkdist mpfr --target=$TARGET
-mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
-# mksubmod_gcc
-
+# mkdist gettext --target=$TARGET
 # mkdist gmp
+# mkdist isl --target=$TARGET
 # mkdist mpc --target=$TARGET
 # mkdist mpfr --target=$TARGET
+mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
+mksubmod_gcc
+
+
 # mksubmod_gcc
 # build_limine
 
