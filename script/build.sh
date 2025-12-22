@@ -84,17 +84,17 @@ mksubmod()
 
 mksubmod_gcc()
 {
-    mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
-
     source=$SUBMOD_DIR/gcc; cd $(getBuildDest "$source");
     $source/configure \
         --prefix="$PREFIX" --target=$TARGET \
         --disable-nls --enable-languages=c,c++ \
         --without-headers --disable-hosted-libstdcxx \
-        --with-gmp="$PREFIX" --with-mpc="$PREFIX" --with-mpfr="$PREFIX"
+        --disable-multilib
+        # --with-gmp="$PREFIX" --with-mpc="$PREFIX" --with-mpfr="$PREFIX"
 
-    make -j$(nproc) all-gcc all-target-libgcc all-target-libstdc++-v3;
-    make $itargets install-gcc install-target-libgcc install-target-libstdc++-v3;
+    # make -j$(nproc) all-gcc                 && make install-gcc;
+    make -j$(nproc) all-target-libgcc       && make install-target-libgcc;
+    # make -j$(nproc) all-target-libstdc++-v3 && make install-target-libstdc++-v3;
 }
 
 
@@ -121,11 +121,12 @@ mksubmod_gcc()
 
 
 
-mkdist autoconf --target=$TARGET
-mkdist automake --target=$TARGET
+# mkdist autoconf --target=$TARGET
+# mkdist automake --target=$TARGET
 
 if [[ "$TARGET" == "x86_64-anos" ]]; then
 
+    # mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
     mksubmod_gcc
 
     # mkdist gmp
