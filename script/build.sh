@@ -81,7 +81,6 @@ mksubmod()
     make install;
 }
 
-
 mksubmod_gcc()
 {
     source=$SUBMOD_DIR/gcc; cd $(getBuildDest "$source");
@@ -91,9 +90,18 @@ mksubmod_gcc()
         --without-headers --disable-hosted-libstdcxx  \
         --disable-multilib
 
-    make -j$(nproc) all-gcc                 && make install-gcc;
-    make -j$(nproc) all-target-libgcc       && make install-target-libgcc;
-    make -j$(nproc) all-target-libstdc++-v3 && make install-target-libstdc++-v3;
+    make -j$(nproc) all-gcc
+
+    make -j$(nproc) all-target-libgcc CFLAGS_FOR_TARGET='-g -O2 -mcmodel=kernel -mno-red-zone' || true
+    # will fail with: cc1: error: code model kernel does not support PIC mode
+    sed -i 's/PICFLAG/DISABLED_PICFLAG/g' $TARGET/libgcc/Makefile
+    make -j$(nproc) all-target-libgcc CFLAGS_FOR_TARGET='-g -O2 -mcmodel=kernel -mno-red-zone'
+
+    make -j$(nproc) all-target-libstdc++-v3
+
+    make install-gcc;
+    make install-target-libgcc;
+    make install-target-libstdc++-v3;
 }
 
 
