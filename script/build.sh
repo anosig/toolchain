@@ -88,13 +88,11 @@ mksubmod_gcc()
     $source/configure \
         --prefix="$PREFIX" --target=$TARGET \
         --disable-nls --enable-languages=c,c++ \
-        --without-headers --disable-hosted-libstdcxx \
-        --disable-multilib
-        # --with-gmp="$PREFIX" --with-mpc="$PREFIX" --with-mpfr="$PREFIX"
+        --without-headers --disable-hosted-libstdcxx 
 
-    # make -j$(nproc) all-gcc                 && make install-gcc;
+    make -j$(nproc) all-gcc                 && make install-gcc;
     make -j$(nproc) all-target-libgcc       && make install-target-libgcc;
-    # make -j$(nproc) all-target-libstdc++-v3 && make install-target-libstdc++-v3;
+    make -j$(nproc) all-target-libstdc++-v3 && make install-target-libstdc++-v3;
 }
 
 
@@ -107,7 +105,7 @@ mksubmod_gcc()
 #     fi
 
 #     ./configure \
-#         TOOLCHAIN_FOR_TARGET=x86_64-anos- \
+#         TOOLCHAIN_FOR_TARGET=x86_64-elf-anos- \
 #         --prefix=$HOME/devel/anos_opt/x86_64-elf \
 #         --enable-bios-cd=yes --enable-bios-pxe=yes --enable-bios=yes \
 #         --enable-uefi-x86-64=yes --enable-uefi-cd
@@ -121,23 +119,26 @@ mksubmod_gcc()
 
 
 
-# mkdist autoconf --target=$TARGET
-# mkdist automake --target=$TARGET
+mkdist autoconf --target=$TARGET
+mkdist automake --target=$TARGET
 
-if [[ "$TARGET" == "x86_64-anos" ]]; then
-
-    # mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
-    mksubmod_gcc
-
-    # mkdist gmp
-    # mkdist mpc --target=$TARGET
-    # mkdist mpfr --target=$TARGET
-    # mksubmod_gcc
-    # build_limine
-
-    # mksubmod limine TOOLCHAIN_FOR_TARGET=$TARGET- \
-    #     --enable-bios-cd=yes --enable-bios-pxe=yes --enable-bios=yes \
-    #     --enable-uefi-x86-64=yes --enable-uefi-cd
+if [[ "$TARGET" != "x86_64-elf-anos" ]]; then
+    exit 0
 fi
+
+mkdist mpc --target=$TARGET
+mkdist mpfr --target=$TARGET
+mksubmod binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
+# mksubmod_gcc
+
+# mkdist gmp
+# mkdist mpc --target=$TARGET
+# mkdist mpfr --target=$TARGET
+# mksubmod_gcc
+# build_limine
+
+# mksubmod limine TOOLCHAIN_FOR_TARGET=$TARGET- \
+#     --enable-bios-cd=yes --enable-bios-pxe=yes --enable-bios=yes \
+#     --enable-uefi-x86-64=yes --enable-uefi-cd
 
 # find $TOOLCHAIN_PREFIX/lib -name 'libgcc.a'
