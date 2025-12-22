@@ -5,7 +5,7 @@ OG_PATH="$PATH"
 THIS_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 source ${THIS_DIR}/env.sh
 
-export PREFIX="$HOME/opt/cross/x86_64-elf"
+export PREFIX="$HOME/opt/cross/x86_64-anos"
 export PATH="$PREFIX/bin:$OG_PATH"
 
 cd $SUBMOD_DIR/binutils/ld;      $PREFIX/bin/automake;
