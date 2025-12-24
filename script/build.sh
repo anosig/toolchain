@@ -21,13 +21,6 @@ while [[ "$1" != "" ]]; do
 done
 
 
-export TARGET=$opt_target
-export PREFIX="${PRJ}/build/${TARGET}-tools"
-export PATH="$PREFIX/bin:$PATH"
-BUILD="${PRJ}/build/${BUILD_ROOT}/${TARGET}"
-mkdir -p $BUILD
-
-
 mkdist()
 {
     name=$1; shift;
@@ -52,6 +45,9 @@ mkdist_gcc()
         --without-headers --disable-hosted-libstdcxx  \
         --disable-multilib
 
+    # make -j$(nproc) all-gcc all-target-libgcc all-target-libstdc++-v3;
+    # make install-gcc install-target-libgcc install-target-libstdc++-v3;
+
     make -j$(nproc) all-gcc;
     make install-gcc;
 
@@ -66,9 +62,11 @@ mkdist_gcc()
 };
 
 
-# mkdist autoconf --target=$TARGET
-# mkdist automake --target=$TARGET
+mkdist autoconf --target=$TARGET
+mkdist automake --target=$TARGET
 mkdist binutils --target=$TARGET --with-sysroot --disable-nls --disable-werror
+
+export PATH="$PREFIX/bin:$PATH"
 mkdist_gcc
 
 
