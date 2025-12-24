@@ -1,5 +1,4 @@
-diff --git a/bfd/config.bfd b/bfd/config.bfd
-index 4e5a838fe4e..6e1b3dec205 100644
+diff -ruN a/bfd/config.bfd b/bfd/config.bfd
 --- a/bfd/config.bfd
 +++ b/bfd/config.bfd
 @@ -237,6 +237,11 @@ esac
@@ -26,8 +25,19 @@ index 4e5a838fe4e..6e1b3dec205 100644
    arm-*-darwin*)
      targ_defvec=arm_mach_o_vec
      targ_selvecs="mach_o_le_vec mach_o_be_vec mach_o_fat_vec"
-diff --git a/config.sub b/config.sub
-index 4aaae46f6f7..cc71ae3f1e3 100755
+# diff -ruN a/bfd/version.h b/bfd/version.h
+# --- a/bfd/version.h
+# +++ b/bfd/version.h
+# @@ -16,7 +16,7 @@
+ 
+#     In releases, the date is not included in either version strings or
+#     sonames.  */
+# -#define BFD_VERSION_DATE 20251221
+# +#define BFD_VERSION_DATE 20251222
+#  #define BFD_VERSION @bfd_version@
+#  #define BFD_VERSION_STRING  @bfd_version_package@ @bfd_version_string@
+#  #define REPORT_BUGS_TO @report_bugs_to@
+diff -ruN a/config.sub b/config.sub
 --- a/config.sub
 +++ b/config.sub
 @@ -1964,7 +1964,8 @@ case $os in
@@ -40,8 +50,7 @@ index 4aaae46f6f7..cc71ae3f1e3 100755
  	| aix* \
  	| amdhsa* \
  	| amigados* \
-diff --git a/gas/configure.tgt b/gas/configure.tgt
-index 7c81bffa16b..decabb3f3a5 100644
+diff -ruN a/gas/configure.tgt b/gas/configure.tgt
 --- a/gas/configure.tgt
 +++ b/gas/configure.tgt
 @@ -225,6 +225,7 @@ case ${generic_target} in
@@ -52,8 +61,7 @@ index 7c81bffa16b..decabb3f3a5 100644
    i386-*-beospe*)			fmt=coff em=pe ;;
    i386-*-beos*)				fmt=elf ;;
    i386-*-elfiamcu)			fmt=elf arch=iamcu ;;
-diff --git a/ld/Makefile.am b/ld/Makefile.am
-index ccff9289924..fcf322daf79 100644
+diff -ruN a/ld/Makefile.am b/ld/Makefile.am
 --- a/ld/Makefile.am
 +++ b/ld/Makefile.am
 @@ -152,6 +152,7 @@ endif
@@ -80,8 +88,7 @@ index ccff9289924..fcf322daf79 100644
  	eelf_x86_64_cloudabi.c \
  	eelf_x86_64_fbsd.c \
  	eelf_x86_64_haiku.c \
-diff --git a/ld/Makefile.in b/ld/Makefile.in
-index 3e24bd4deb2..814ddb63ffc 100644
+diff -ruN a/ld/Makefile.in b/ld/Makefile.in
 --- a/ld/Makefile.in
 +++ b/ld/Makefile.in
 @@ -663,6 +663,7 @@ LIBIBERTY = ../libiberty/libiberty.a
@@ -132,8 +139,7 @@ index 3e24bd4deb2..814ddb63ffc 100644
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_cloudabi.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_fbsd.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_haiku.Po@am__quote@
-diff --git a/ld/configure.tgt b/ld/configure.tgt
-index ea01ccf9a1b..8f179954997 100644
+diff -ruN a/ld/configure.tgt b/ld/configure.tgt
 --- a/ld/configure.tgt
 +++ b/ld/configure.tgt
 @@ -351,6 +351,11 @@ hppa*-*-netbsd*)	targ_emul=hppanbsd
@@ -159,3 +165,17 @@ index ea01ccf9a1b..8f179954997 100644
  x86_64-*-rdos*)		targ_emul=elf64rdos
  			;;
  x86_64-*-cloudabi*)	targ_emul=elf_x86_64_cloudabi
+diff -ruN a/ld/emulparams/elf_i386_anos.sh b/ld/emulparams/elf_i386_anos.sh
+new file mode 100644
+--- /dev/null
++++ b/ld/emulparams/elf_i386_anos.sh
+@@ -0,0 +1,2 @@
++source_sh ${srcdir}/emulparams/elf_i386.sh
++TEXT_START_ADDR=0x08000000
+diff -ruN a/ld/emulparams/elf_x86_64_anos.sh b/ld/emulparams/elf_x86_64_anos.sh
+new file mode 100644
+--- /dev/null
++++ b/ld/emulparams/elf_x86_64_anos.sh
+@@ -0,0 +1,2 @@
++source_sh ${srcdir}/emulparams/elf_x86_64.sh
++TEXT_START_ADDR=0x400000

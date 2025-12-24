@@ -1,0 +1,101 @@
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 4e5a838fe4e..6e1b3dec205 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -237,6 +237,11 @@ esac
+ case "${targ}" in
+ # START OF targmatch.h
+ #ifdef BFD64
++  x86_64-*-anos*)
++    targ_defvec=x86_64_elf64_vec
++    targ_selvecs=i386_elf32_vec
++    want64=true
++    ;;
+   aarch64-*-darwin*)
+     targ_defvec=aarch64_mach_o_vec
+     targ_selvecs="arm_mach_o_vec mach_o_le_vec mach_o_be_vec mach_o_fat_vec"
+@@ -363,6 +368,11 @@ case "${targ}" in
+     targ_selvecs=arc_elf32_be_vec
+     ;;
+ 
++  i[3-7]86-*-anos*)
++    targ_defvec=i386_elf32_vec
++    targ_selvecs=
++    targ64_selvecs=x86_64_elf64_vec
++    ;;
+   arm-*-darwin*)
+     targ_defvec=arm_mach_o_vec
+     targ_selvecs="mach_o_le_vec mach_o_be_vec mach_o_fat_vec"
+diff --git a/config.sub b/config.sub
+index 4aaae46f6f7..cc71ae3f1e3 100755
+--- a/config.sub
++++ b/config.sub
+@@ -1964,7 +1964,8 @@ case $os in
+ 		;;
+ 	# Now accept the basic system types.
+ 	# Each alternative MUST end in a * to match a version number.
+-	  abug \
++	  anos \
++  | abug \
+ 	| aix* \
+ 	| amdhsa* \
+ 	| amigados* \
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index 7c81bffa16b..decabb3f3a5 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -225,6 +225,7 @@ case ${generic_target} in
+   h8300-*-elf)				fmt=elf ;;
+   h8300-*-linux*)			fmt=elf em=linux ;;
+ 
++  i386-*-anos*)    fmt=elf ;;
+   i386-*-beospe*)			fmt=coff em=pe ;;
+   i386-*-beos*)				fmt=elf ;;
+   i386-*-elfiamcu)			fmt=elf arch=iamcu ;;
+diff --git a/ld/Makefile.am b/ld/Makefile.am
+index ccff9289924..781e9a9a7e8 100644
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -277,6 +277,7 @@ ALL_EMULATION_SOURCES = \
+ 	eelf32xtensa.c \
+ 	eelf32z80.c \
+ 	eelf_i386.c \
++	eelf_i386_anos.c \
+ 	eelf_i386_be.c \
+ 	eelf_i386_fbsd.c \
+ 	eelf_i386_haiku.c \
+@@ -459,6 +460,7 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf64tilegx_be.c \
+ 	eelf_mipsel_haiku.c \
+ 	eelf_x86_64.c \
++	eelf_x86_64_anos.c \
+ 	eelf_x86_64_cloudabi.c \
+ 	eelf_x86_64_fbsd.c \
+ 	eelf_x86_64_haiku.c \
+diff --git a/ld/configure.tgt b/ld/configure.tgt
+index ea01ccf9a1b..8f179954997 100644
+--- a/ld/configure.tgt
++++ b/ld/configure.tgt
+@@ -351,6 +351,11 @@ hppa*-*-netbsd*)	targ_emul=hppanbsd
+ 			;;
+ hppa*-*-openbsd*)	targ_emul=hppaobsd
+ 			;;
++i[3-7]86-*-anos*)
++			targ_emul=elf_i386_anos
++			targ_extra_emuls=elf_i386
++			targ64_extra_emuls="elf_x86_64_anos elf_x86_64"
++			;;
+ i[3-7]86-*-nto-qnx*)	targ_emul=i386nto
+ 			;;
+ i[3-7]86-*-go32)	targ_emul=i386go32
+@@ -998,6 +1003,10 @@ vax-*-linux-*)		targ_emul=elf32vax
+ 			;;
+ visium-*-elf)		targ_emul=elf32visium
+ 			;;
++x86_64-*-anos*)
++			targ_emul=elf_x86_64_anos
++			targ_extra_emuls="elf_i386_anos elf_x86_64 elf_i386"
++			;;
+ x86_64-*-rdos*)		targ_emul=elf64rdos
+ 			;;
+ x86_64-*-cloudabi*)	targ_emul=elf_x86_64_cloudabi
