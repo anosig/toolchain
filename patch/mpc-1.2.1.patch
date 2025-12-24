@@ -1,6 +1,6 @@
 diff -ruN old/mpc-1.2.1/build-aux/config.sub gcc/mpc-1.2.1/build-aux/config.sub
---- old/mpc-1.2.1/build-aux/config.sub	2025-12-21 11:59:27.044079968 +1000
-+++ gcc/mpc-1.2.1/build-aux/config.sub	2025-12-21 08:38:56.676465046 +1000
+--- old/mpc-1.2.1/build-aux/config.sub 2025-12-21 11:59:27.044079968 +1000
++++ gcc/mpc-1.2.1/build-aux/config.sub 2025-12-21 08:38:56.676465046 +1000
 @@ -1366,7 +1366,7 @@
  	     | skyos* | haiku* | rdos* | toppers* | drops* | es* \
  	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \

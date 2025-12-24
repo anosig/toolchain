@@ -1,4 +1,9 @@
-.aux/*
-aux/*
 build
+dist/autoconf
+dist/automake
+dist/binutils
+dist/g*
+dist/isl
+dist/mp*
+dist/*.tar.*
 *-tools
