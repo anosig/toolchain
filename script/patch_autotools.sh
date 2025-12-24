@@ -8,7 +8,7 @@ source ${THIS_DIR}/env.sh
 export PREFIX="$HOME/opt/cross/x86_64-anos"
 export PATH="$PREFIX/bin:$OG_PATH"
 
-cd $SUBMOD_DIR/binutils/ld;      $PREFIX/bin/automake;
-cd $SUBMOD_DIR/gcc/libstdc++-v3; $PREFIX/bin/autoconf;
+cd $DIST_DIR/binutils/ld;      $PREFIX/bin/automake;
+cd $DIST_DIR/gcc/libstdc++-v3; $PREFIX/bin/autoconf;
 
 export PATH="$OG_PATH"

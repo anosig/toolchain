@@ -1,8 +1,9 @@
 build
-dist/autoconf
-dist/automake
-dist/binutils
-dist/g*
+dist/auto*
+dist/binutils*
+dist/gcc*
+dist/gettext
+dist/gmp*
 dist/isl
 dist/mp*
 dist/*.tar.*
